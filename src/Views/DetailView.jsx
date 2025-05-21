@@ -1,11 +1,11 @@
-import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./DetailView.css";
 
-function DetailMovieView() {
+function DetailView() {
+    const [movie, setMovie] = useState({});
     const [trailers, setTrailers] = useState([]);
-    const [movie, setMovie] = useState([]);
     const [director, setDirector] = useState(null);
     const { id } = useParams();
     const navigate = useNavigate();
@@ -14,19 +14,22 @@ function DetailMovieView() {
         async function fetchMovieDetails() {
             try {
                 const movieResponse = await axios.get(
-                    `https://api.themoviedb.org/3/movie/${id}?api_key=${import.meta.env.VITE_TMDB_KEY}&append_to_response=credits,videos`
+                    `https://api.themoviedb.org/3/movie/${id}?api_key=${import.meta.env.VITE_TMDB_KEY}`
                 );
                 setMovie(movieResponse.data);
 
-                const directorInfo = movieResponse.data.credits.crew.find(
+                const creditsResponse = await axios.get(
+                    `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${import.meta.env.VITE_TMDB_KEY}`
+                );
+                const directorData = creditsResponse.data.crew.find(
                     (crewMember) => crewMember.job === "Director"
                 );
-                setDirector(directorInfo ? directorInfo.name : "Unknown");
+                setDirector(directorData ? directorData.name : "Unknown");
 
-                const trailers = movieResponse.data.videos.results.filter(
-                    (video) => video.type === "Trailer"
+                const trailersResponse = await axios.get(
+                    `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${import.meta.env.VITE_TMDB_KEY}`
                 );
-                setTrailers(trailers);
+                setTrailers(trailersResponse.data.results.filter((video) => video.type === "Trailer"));
             } catch (error) {
                 console.error("Error fetching movie details:", error);
             }
@@ -81,7 +84,7 @@ function DetailMovieView() {
                         ))}
                     </div>
                 ) : (
-                    <p id="textInDetail">No trailers available.</p>
+                    <p>No trailers available.</p>
                 )}
             </div>
 
@@ -92,4 +95,4 @@ function DetailMovieView() {
     );
 }
 
-export default DetailMovieView;
+export default DetailView;

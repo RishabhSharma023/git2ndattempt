@@ -6,21 +6,43 @@ function SettingsView() {
     const { user, setUser } = useContext(UserContext);
     const [firstName, setFirstName] = useState(user?.firstName || "");
     const [lastName, setLastName] = useState(user?.lastName || "");
-    const [preferredGenre, setPreferredGenre] = useState(user?.selectedGenres?.[0] || "");
+    const [selectedGenres, setSelectedGenres] = useState(user?.selectedGenres || []);
 
     const genres = [
-        "Action", "Adventure", "Animation", "Comedy", "Family",
-        "Fantasy", "History", "Horror", "Sci-Fi", "Thriller"
+        { name: "Action", id: 28 },
+        { name: "Adventure", id: 12 },
+        { name: "Animation", id: 16 },
+        { name: "Comedy", id: 35 },
+        { name: "Family", id: 10751 },
+        { name: "Fantasy", id: 14 },
+        { name: "History", id: 36 },
+        { name: "Horror", id: 27 },
+        { name: "Sci-Fi", id: 878 },
+        { name: "Thriller", id: 53 },
     ];
+
+    function handleGenreChange(event) {
+        const { value, checked } = event.target;
+        if (checked) {
+            setSelectedGenres((prev) => [...prev, value]);
+        } else {
+            setSelectedGenres((prev) => prev.filter((genre) => genre !== value));
+        }
+    }
 
     function handleSaveChanges(event) {
         event.preventDefault();
+
+        if (selectedGenres.length < 5) {
+            alert("Please select at least 5 genres.");
+            return;
+        }
 
         const updatedUser = {
             ...user,
             firstName,
             lastName,
-            selectedGenres: [preferredGenre],
+            selectedGenres,
         };
 
         setUser(updatedUser);
@@ -55,18 +77,20 @@ function SettingsView() {
                     disabled
                 />
 
-                <label className="settings-label">Preferred Genre:</label>
-                <select
-                    className="settings-select"
-                    value={preferredGenre}
-                    onChange={(e) => setPreferredGenre(e.target.value)}
-                >
+                <label className="settings-label">Preferred Genres (at least 5):</label>
+                <div className="genres-checkboxes">
                     {genres.map((genre) => (
-                        <option key={genre} value={genre}>
-                            {genre}
-                        </option>
+                        <div key={genre.id} className="genre-checkbox">
+                            <input
+                                type="checkbox"
+                                value={genre.name}
+                                checked={selectedGenres.includes(genre.name)}
+                                onChange={handleGenreChange}
+                            />
+                            <label>{genre.name}</label>
+                        </div>
                     ))}
-                </select>
+                </div>
 
                 <button type="submit" className="settings-save-button">
                     Save Changes

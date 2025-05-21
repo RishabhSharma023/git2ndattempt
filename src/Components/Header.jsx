@@ -11,16 +11,16 @@ function Header() {
 
     // Update the URL dynamically as the user types
     useEffect(() => {
-        const handler = setTimeout(() => {
-            if (searchQuery.trim()) {
-                navigate(`/movies/search?query=${searchQuery}`);
-            }
-        }, 500); // 500ms debounce time
+    const handler = setTimeout(() => {
+        if (searchQuery.trim() && !window.location.pathname.includes("/movies/details")) {
+            navigate(`/movies/search?query=${searchQuery}`);
+        }
+    }, 500); // 500ms debounce time
 
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [searchQuery, navigate]);
+    return () => {
+        clearTimeout(handler);
+    };
+}, [searchQuery, navigate]);
 
     function handleSignOut() {
         localStorage.removeItem("isLoggedIn");

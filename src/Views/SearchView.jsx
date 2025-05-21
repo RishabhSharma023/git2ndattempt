@@ -1,6 +1,6 @@
 import "./SearchView.css";
 import { useState, useEffect, useContext } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom"; // Import Link
 import axios from "axios";
 import { UserContext } from "../Contexts/UserContext.jsx";
 
@@ -17,7 +17,6 @@ function SearchView() {
         setDebouncedQuery(query);
     }, [searchParams]);
 
-  
     useEffect(() => {
         const fetchSearchResults = async () => {
             if (!debouncedQuery) {
@@ -52,15 +51,17 @@ function SearchView() {
                     <div className="search-results-grid">
                         {searchResults.map((movie) => (
                             <div key={movie.id} className="search-result-item">
-                                {movie.poster_path ? (
-                                    <img
-                                        className="search-result-poster"
-                                        src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-                                        alt={movie.title}
-                                    />
-                                ) : (
-                                    <div className="no-image">No Image</div>
-                                )}
+                                <Link to={`/movies/details/${movie.id}`}>
+                                    {movie.poster_path ? (
+                                        <img
+                                            className="search-result-poster"
+                                            src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                                            alt={movie.title}
+                                        />
+                                    ) : (
+                                        <div className="no-image">No Image</div>
+                                    )}
+                                </Link>
                                 <h3 className="search-result-title">{movie.title}</h3>
                                 <button
                                     className="buy-button"

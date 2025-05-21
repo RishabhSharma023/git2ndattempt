@@ -20,8 +20,9 @@ function App() {
         <Route path="/login" element={<LoginView />} />
         <Route path="/movies" element={<MoviesView />}>
           <Route path="genre/:genre_id" element={<GenreView />} />
-          <Route path="details/:id" element={<DetailView />} />
+          <Route path="/movies/details/:id" element={<DetailView />} />
           <Route path="search" element={<SearchView />} />
+          <Route path="search/details/:id" element={<DetailView />} />
         </Route>
         <Route path="/cart" element={<CartView />} />
         <Route path="/settings" element={<SettingsView />} />

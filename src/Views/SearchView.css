@@ -28,10 +28,13 @@
 
 .search-results-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(5, 1fr); /* 5 columns */
+    grid-template-rows: repeat(4, auto); /* Up to 4 rows */
+    gap: 20px; /* Space between items */
     justify-items: center;
-    margin-top: 20px;
+    width: 100%;
+    max-width: 1200px; /* Optional: Limit the grid width */
+    margin: 0 auto; /* Center the grid */
 }
 
 .search-result-item {
