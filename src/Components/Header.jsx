@@ -1,6 +1,6 @@
 import './Header.css';
 import { useNavigate } from 'react-router-dom';
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect, useRef } from 'react';
 import { UserContext } from '../Contexts/UserContext.jsx';
 
 function Header() {
@@ -8,23 +8,30 @@ function Header() {
     const { user } = useContext(UserContext);
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     const [searchQuery, setSearchQuery] = useState("");
+    const searchInputRef = useRef(null);
 
     // Update the URL dynamically as the user types
     useEffect(() => {
-    const handler = setTimeout(() => {
-        if (searchQuery.trim() && !window.location.pathname.includes("/movies/details")) {
-            navigate(`/movies/search?query=${searchQuery}`);
-        }
-    }, 500); // 500ms debounce time
+        const handler = setTimeout(() => {
+            if (searchQuery.trim() && !window.location.pathname.includes("/movies/details")) {
+                navigate(`/movies/search?query=${searchQuery}`);
+            }
+        }, 500); // 500ms debounce time
 
-    return () => {
-        clearTimeout(handler);
-    };
-}, [searchQuery, navigate]);
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [searchQuery, navigate]);
 
     function handleSignOut() {
         localStorage.removeItem("isLoggedIn");
         navigate("/");
+    }
+
+    function handleBlur(event) {
+        if (searchInputRef.current && !searchInputRef.current.contains(event.relatedTarget)) {
+            setSearchQuery(""); // Clear the search query when clicking outside
+        }
     }
 
     return (
@@ -37,13 +44,14 @@ function Header() {
                 {isLoggedIn ? (
                     <>
                         <span className="welcome-message">Hello {user?.firstName}!</span>
-                        <form className="search-form">
+                        <form className="search-form" ref={searchInputRef}>
                             <input
                                 type="text"
                                 className="search-box"
                                 placeholder="Search movies..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
+                                onBlur={handleBlur}
                             />
                         </form>
                         <button className="button" onClick={() => navigate('/cart')}>Cart</button>
